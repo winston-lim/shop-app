@@ -20,15 +20,22 @@ class Product with ChangeNotifier {
     @required this.imageUrl,
     this.isFavourite = false,
   });
+
   Future<void> toggleFavouriteStatus() async {
-    var url =
-        "https://flutter-shop-app-a81ac.firebaseio.com/products/$id/.json";
-    try {
-      http.patch(url, body: json.encode({"isFavourite": !isFavourite}));
-    } catch (error) {
-      throw error;
-    }
+    final oldStatus = isFavourite;
     isFavourite = !isFavourite;
     notifyListeners();
+    final url =
+        "https://flutter-shop-app-a81ac.firebaseio.com/products/$id/.json";
+    try {
+      final response = await http.patch(url,
+          body: json.encode({"isFavourite": isFavourite}));
+      if (response.statusCode >= 400) {
+        throw Exception('Response status code is ${response.statusCode}');
+      }
+    } catch (all) {
+      isFavourite = oldStatus;
+      notifyListeners();
+    }
   }
 }

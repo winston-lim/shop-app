@@ -35,6 +35,7 @@ class Cart with ChangeNotifier {
   }
 
   void addItem(String productId, double price, String title) {
+    print('adding $productId to cart');
     if (_items.containsKey(productId)) {
       _items.update(
           // Update updates values for a certain key value in the map.
